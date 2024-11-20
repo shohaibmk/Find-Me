@@ -4,3 +4,5 @@ yolo*
 .ipynb_checkpoints/Part 1-checkpoint.ipynb
 /.ipynb_checkpoints
 
+
+.gitignore.swp
