@@ -1,7 +1,8 @@
-/runs
+/Part 1/runs
+/Part 1/.DS_Store
+/Part 1/yolo*
+/Part 1/.ipynb_checkpoints
 .DS_Store
-yolo*
-/.ipynb_checkpoints
+Part 1/shelves.jpg
+.ipynb_checkpoints/Part1_Shelf_Detection -checkpoint.ipynb
 .gitignore.swp
-.ipynb_checkpoints/Part 1-checkpoint.ipynb
-/.ipynb_checkpoints
