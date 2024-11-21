@@ -20,15 +20,19 @@ app.config['upload_folder'] = upload_folder
 
 #method to store images in a folder
 def store_images(images):
+    list_of_filenames = []
     for image in images:
         filetype = str(image.mimetype.split('/')[1])
-        file_path = os.path.join(app.config['upload_folder'], "product"+str(product_number)+"_"+str(time.time())+"."+filetype)
+        filename = "product"+str(product_number)+"_"+str(time.time())+"."+filetype
+        file_path = os.path.join(app.config['upload_folder'], filename)
         image.save(file_path)
+        list_of_filenames.append(filename)
+    return list_of_filenames
 
 #method to write into the in memory database
 def databaseWrite(name,description,dimensions,color,price,currency,image):
     global product_number
-    store_images(image)
+    list_of_filenames = store_images(image)
     # print("Writing in DB")
     insert_data = {
         "name":name,
@@ -37,7 +41,7 @@ def databaseWrite(name,description,dimensions,color,price,currency,image):
         "color": color,
         "price": price,
         "currency": currency,
-        "images":image
+        "images":list_of_filenames
     }
     
     print("Product Details:\n",insert_data)
