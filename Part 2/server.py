@@ -1,15 +1,34 @@
 from flask import Flask, request, jsonify
 from threading import Lock
 from datetime import datetime
+import os,time
 import logging
+
+app = Flask(__name__)
 
 #in memory Database
 database = dict()
 product_number = 1  #product counter
 
+
+
+# Directory to save uploaded images
+upload_folder = 'uploads'
+os.makedirs(upload_folder, exist_ok=True)  
+app.config['upload_folder'] = upload_folder
+
+
+#method to store images in a folder
+def store_images(images):
+    for image in images:
+        filetype = str(image.mimetype.split('/')[1])
+        file_path = os.path.join(app.config['upload_folder'], "product"+str(product_number)+"_"+str(time.time())+"."+filetype)
+        image.save(file_path)
+
 #method to write into the in memory database
 def databaseWrite(name,description,dimensions,color,price,currency,image):
     global product_number
+    store_images(image)
     # print("Writing in DB")
     insert_data = {
         "name":name,
@@ -20,6 +39,7 @@ def databaseWrite(name,description,dimensions,color,price,currency,image):
         "currency": currency,
         "images":image
     }
+    
     print("Product Details:\n",insert_data)
     key = "product" + str(product_number)
     # print("after")
@@ -28,25 +48,25 @@ def databaseWrite(name,description,dimensions,color,price,currency,image):
     return key
 
 def databaseRead(pid):
-    # record = database[pid]
     try:
         return database[pid]
     except KeyError:
-        print("key not found")
+        print("Product Not Found: ",pid)
         return None
 
 def get_and_format_product(pid):
     record =  databaseRead(pid)
     if not record:
-        print("record not found")
+        # print("record not found")
         return None
     else:
-        print("record found")
+        print("Product Found: ",pid)
+        print(record)
         return "Found"
 
 
 
-app = Flask(__name__)
+
 
 #method: POST
 #route: '/products'

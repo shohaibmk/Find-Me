@@ -6,3 +6,4 @@
 Part 1/shelves.jpg
 .ipynb_checkpoints/Part1_Shelf_Detection -checkpoint.ipynb
 .gitignore.swp
+/uploads/
