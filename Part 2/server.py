@@ -1,8 +1,9 @@
 from flask import Flask, request, jsonify
 from threading import Lock
 from datetime import datetime
-import os,time
-import logging
+import os
+import time
+
 
 app = Flask(__name__)
 
@@ -10,13 +11,10 @@ app = Flask(__name__)
 database = dict()
 product_number = 1  #product counter
 
-
-
 # Directory to save uploaded images
 upload_folder = 'uploads'
 os.makedirs(upload_folder, exist_ok=True)  
 app.config['upload_folder'] = upload_folder
-
 
 #method to store images in a folder
 def store_images(images):
@@ -58,19 +56,35 @@ def databaseRead(pid):
         print("Product Not Found: ",pid)
         return None
 
+def format_record(record):
+    data = {
+        "name": record["name"],
+        "description": record["description"],
+        "dimensions": record["dimensions"],
+        "color": record["color"],
+        "price": record["price"],
+        "currency": record["currency"],
+    }
+    files = record['images']
+    counter = 1
+    for file in files:
+        
+        id = "Image"+ str(counter)
+        data[id] = file
+        counter += 1
+    
+    # print("\n\n\n\nin format record: ",)
+    return data
+
 def get_and_format_product(pid):
     record =  databaseRead(pid)
     if not record:
-        # print("record not found")
         return None
     else:
         print("Product Found: ",pid)
         print(record)
-        return "Found"
-
-
-
-
+        record = format_record(record)
+        return record
 
 #method: POST
 #route: '/products'
@@ -95,7 +109,7 @@ def add_product():  # Adding new product
             return jsonify({"Error":"Incomplete request","Message":"Missing product images"}),400
                 
         try:
-            pid = databaseWrite(data['Name'],data['Description'],data['Dimensions'],data['Color'],data['Currency'],data['Price'],list_of_files)
+            pid = databaseWrite(data['Name'],data['Description'],data['Dimensions'],data['Color'],data['Price'],data['Currency'],list_of_files)
         except:
             print("Write Failed |",datetime.now())
             return jsonify({"Error":"Write Unsuccessful","Message":"Error creating new product DB"}),400
@@ -105,9 +119,6 @@ def add_product():  # Adding new product
         print("Write Failed |",datetime.now())
         return jsonify({"Error":"Write Unsuccessful","Message":"Error creating new product"})
     
-
-
-
 #method: POST
 #route: '/products'
 #query parameters: pid
@@ -116,14 +127,15 @@ def get_product():
     pid = request.args.get('pid')
     if pid:
         pid = request.args.get('pid')
-        print(request.args.get('pid'))
-        product = get_and_format_product(pid)
-        return jsonify({"pid":pid}), 201
-    else:    
         
+        product = get_and_format_product(pid)
+        if not product:
+            return jsonify({"status":"Product Not Found"}), 201
+        
+        return jsonify(product), 201
+    else:    
         return jsonify({"Message":"Unknown Request"}), 400
 
 if __name__ == '__main__':
     app.run(debug=True, port=5001)
     print("\n\n\n\n\n\n")
-
