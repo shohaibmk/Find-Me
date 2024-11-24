@@ -86,6 +86,19 @@ def get_and_format_product(pid):
         record = format_record(record)
         return record
 
+def updateProduct(product,data,pid):
+    try:
+        for item in database:
+            print("\nBefore update\t:",database[item])
+        for key in data.keys():
+            product[key] = data[key]
+        database[pid] = product
+        for item in database:
+            print("\nAfter update\t:",database[item])
+    except Exception as e:
+        print(f"Update Failed | {datetime.now()} | Error: {e}")
+        return False
+
 #method: POST
 #route: '/products'
 @app.route('/products', methods=['POST'])
@@ -177,18 +190,23 @@ def put_product():
         # print("\n\n\n\nno pid")
         return jsonify({"Message":"Unknown Request"}), 400
 
-def updateProduct(product,data,pid):
-    try:
-        for item in database:
-            print("\nBefore update\t:",database[item])
-        for key in data.keys():
-            product[key] = data[key]
-        database[pid] = product
-        for item in database:
-            print("\nAfter update\t:",database[item])
-    except Exception as e:
-        print(f"Update Failed | {datetime.now()} | Error: {e}")
-        return False
+#method: DELETE
+#route: '/products'
+#query parameters: pid
+@app.route('/products', methods=['DELETE'])
+def delete_product():
+    pid = request.args.get('pid')  # Fetch 'pid' query parameter
+    if pid:
+        if pid in database:
+            del database[pid]  # Remove the product from the dictionary
+            return jsonify({"Message": "Product deleted successfully"}), 200
+        else:
+            return jsonify({"Error": "Product Not Found"}), 404  # Product doesn't exist
+    else:
+        return jsonify({"Error": "Unknown Request"}), 400  # Missing 'pid'
+
+
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=5001)
