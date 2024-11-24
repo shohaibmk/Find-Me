@@ -89,52 +89,106 @@ def get_and_format_product(pid):
 #method: POST
 #route: '/products'
 @app.route('/products', methods=['POST'])
-def add_product():  # Adding new product
-    print("\nWrite initiated |",datetime.now())
+def add_product():
+    print("\nWrite initiated |", datetime.now())
     try:
+        # Retrieve form data
         data = request.form
         list_of_files = []
 
-        #check for complete form data
-        if not data or len(data) !=6:
-            return jsonify({"Error":"Incomplete request","Message":"Make sure to include name,description,dimensions,color,price,currency"}),400
+        # Check for complete form data
+        if not data or len(data) != 6:
+            return jsonify({
+                "Error": "Incomplete request",
+                "Message": "Make sure to include name, description, dimensions, color, price, and currency"
+            }), 400
 
-        #check for complete image files
-        if request.files:        
-            for file in request.files:
-                list_of_files.append(request.files[file])
+        # Check for image files
+        if request.files:
+            list_of_files = [request.files[file] for file in request.files]
+        else:
+            return jsonify({
+                "Error": "Incomplete request",
+                "Message": "Missing product images"
+            }), 400
 
-            # print("\n\nlist of images:",list_of_files)
-        elif not request.files:
-            return jsonify({"Error":"Incomplete request","Message":"Missing product images"}),400
-                
+        # Attempt to write to database
         try:
-            pid = databaseWrite(data['Name'],data['Description'],data['Dimensions'],data['Color'],data['Price'],data['Currency'],list_of_files)
-        except:
-            print("Write Failed |",datetime.now())
-            return jsonify({"Error":"Write Unsuccessful","Message":"Error creating new product DB"}),400
-        print("Write Successful |",datetime.now())
-        return jsonify({"Message":"Write Successful" ,"Data": str(data),"Images":str(list_of_files),"ProductID":pid}), 201
-    except:
-        print("Write Failed |",datetime.now())
-        return jsonify({"Error":"Write Unsuccessful","Message":"Error creating new product"})
-    
-#method: POST
+            pid = databaseWrite(
+                data['Name'], data['Description'], data['Dimensions'], 
+                data['Color'], data['Price'], data['Currency'], list_of_files
+            )
+        except Exception as e:
+            print(f"Write Failed | {datetime.now()} | Error: {e}")
+            return jsonify({
+                "Error": "Write Unsuccessful",
+                "Message": "Error creating new product in the database"
+            }), 400
+
+        print("Write Successful |", datetime.now())
+        return jsonify({
+            "Message": "Write Successful",
+            "Data": str(data),
+            "Images": str(list_of_files),
+            "ProductID": pid
+        }), 201
+
+    except Exception as e:
+        print(f"Write Failed | {datetime.now()} | Error: {e}")
+        return jsonify({
+            "Error": "Write Unsuccessful",
+            "Message": "Error creating new product"
+        }), 400
+        
+#method: GET
 #route: '/products'
 #query parameters: pid
 @app.route('/products', methods=['GET'])
 def get_product():
-    pid = request.args.get('pid')
+    pid = request.args.get('pid')  # Fetch 'pid' query parameter
     if pid:
-        pid = request.args.get('pid')
-        
         product = get_and_format_product(pid)
         if not product:
-            return jsonify({"status":"Product Not Found"}), 201
+            return jsonify({"status": "Product Not Found"}), 404  # Product not found
+        return jsonify(product), 200  # Successful response
+    else:
+        return jsonify({"Message": "Unknown Request"}), 400  # Bad Request if no 'pid'
+
+#method: PUT
+#route: '/products'
+#query parameters: pid
+@app.route('/products',methods=['PUT'])
+def put_product():
+    pid = request.args.get('pid')
+    # print("\n\n\npid")
+    if pid:
+        print("\n\ngot pid")
+        data = request.form
+        product = databaseRead(pid)
+        # print("\n\n\nfor data",data)
         
-        return jsonify(product), 201
+        if not product:
+            return jsonify({"status":"Product Not Found"}), 404
+        # print("\n\n\nproduct found")
+        if data:
+            status = updateProduct(product,data,pid)
+        return jsonify({"Message":"Product updated successfully"}), 201
     else:    
+        # print("\n\n\n\nno pid")
         return jsonify({"Message":"Unknown Request"}), 400
+
+def updateProduct(product,data,pid):
+    try:
+        for item in database:
+            print("\nBefore update\t:",database[item])
+        for key in data.keys():
+            product[key] = data[key]
+        database[pid] = product
+        for item in database:
+            print("\nAfter update\t:",database[item])
+    except Exception as e:
+        print(f"Update Failed | {datetime.now()} | Error: {e}")
+        return False
 
 if __name__ == '__main__':
     app.run(debug=True, port=5001)
