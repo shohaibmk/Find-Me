@@ -8,3 +8,4 @@ Part 1/shelves.jpg
 .gitignore.swp
 /uploads/
 /Part 2/uploads
+/Part 2/__pycache__
