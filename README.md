@@ -22,12 +22,17 @@ This code imports necessary libraries to perform object detection. Here's a brie
 - OpenCV: A computer vision library used for image processing and video analysis.
 - Ultralytics YOLO: A library providing pre-trained YOLO models for object detection.
 
+# Fine-tuning
+
+
+
+# Object Detection
 
 ## Running the Code
 To utilize this script:
 
 - Load an image, video, or live feed using OpenCV.
-- Use the finetuned model based the ultralytics library for object detection.
+- Use the fine-tuned model based on the ultralytics library for object detection.
 
 
 ## Example Code
