@@ -1,4 +1,63 @@
-# Part 2: Backend and API Development with Python
+# PART 1: Image Processing and Machine Learning with Python
+
+This project demonstrates how to use YOLO (You Only Look Once) for object detection using OpenCV and the Ultralytics library in Python.
+
+## Requirements
+
+- Python 3.8 or higher
+- `opencv-python` library
+- `ultralytics` library
+- Required dependencies listed in `requirements.txt` 
+
+You can install the required libraries using the following command:
+
+```bash
+pip install opencv-python ultralytics
+```
+
+## Usage
+
+This code imports necessary libraries to perform object detection. Here's a brief overview of the two main libraries used:
+
+- OpenCV: A computer vision library used for image processing and video analysis.
+- Ultralytics YOLO: A library providing pre-trained YOLO models for object detection.
+
+
+## Running the Code
+To utilize this script:
+
+- Load an image, video, or live feed using OpenCV.
+- Use the finetuned model based the ultralytics library for object detection.
+
+
+## Example Code
+Here’s an extended example of how you can use the imported libraries for object detection:
+
+```python
+import cv2
+from ultralytics import YOLO
+
+# Load the YOLO model
+model = YOLO('./Part 1/model/finetuned_yolo11n.pt')  
+
+# Load an image
+image = cv2.imread('example.jpg')
+
+# Perform object detection
+results = model(image,conf = 0.5,save = True)
+
+# Display results
+results.show()
+```
+
+## References
+
+- OpenCV Documentation
+- Ultralytics YOLO
+
+<br><br>
+
+# PART 2: Backend and API Development with Python
 
 This project is a simple Flask-based API for managing product information. It supports CRUD (Create, Read, Update, Delete) operations for products. The API allows adding products, retrieving details, updating product information, and deleting products. It also handles product images and validates form data.
 
@@ -12,8 +71,8 @@ This project is a simple Flask-based API for managing product information. It su
 ## Requirements
 
 - Python 3.6 or higher
-- Flask
-- Required dependencies listed in `requirements.txt` (not provided in the code)
+- `Flask` library
+- Required dependencies listed in `requirements.txt` 
 
 ## Installation
 
