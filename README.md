@@ -94,7 +94,6 @@ GET /products?pid=product2
 
 ### Example Response:
 ```json
-Copy code
 {
     "Name": "Product A",
     "Description": "Description of Product A",
