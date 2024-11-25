@@ -20,7 +20,7 @@ This project is a simple Flask-based API for managing product information. It su
 1. Clone this repository:
 
     ```bash
-    git clone <repository_url>
+    git clone "https://github.com/shohaibmk/Fynd-me.git"
     ```
 
 2. Install dependencies:
