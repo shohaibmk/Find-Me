@@ -24,8 +24,18 @@ This code imports necessary libraries to perform object detection. Here's a brie
 
 # Fine-tuning
 
+Fine tuning the Yolo11n model for shelf detection.
 
+## Running the Code
 
+- Upload your dataset and `data.yml` to Google Drive at `MyDrive/Shelves/`.
+- Update the data.yaml file with paths to your dataset and other configurations.
+- Run the script in Google Colab.
+- it will produce `best.pt` file at directory `/content/gdrive/MyDrive/runs/detect/train{number}` which contains the fine tuned model. 
+- download the model.
+- rename `best.pt`  file to `finetuned_yolo11n.pt`.
+- Pass the path to the `finetuned_yolo11n.pt` in th next step (objet detection).
+<br><br>
 # Object Detection
 
 ## Running the Code
